@@ -2,21 +2,13 @@ extends Line2D
 
 @onready var player = get_parent().get_node("player")
 @onready var dragline = get_parent().get_node("dragline")
+@onready var cam = get_parent().get_node("camera")
 var max_points = 250
 
 func update_trajectory(delta):
 	clear_points()
 	var pos = player.global_position
 	var vel = ((dragline.vec_start - dragline.vec_fin) * dragline.vel_multiplier)
-
-	# Ensure velocity doesn't exceed vel_length_max and turn trajectory indicator red if velocity is at its maximum
-	if (vel.length() > dragline.vel_length_max):
-		vel = vel.normalized() * dragline.vel_length_max
-		default_color = Color.RED
-	else:
-		default_color = Color.WHITE
-	# Plot points
-
 	for i in max_points:
 		add_point(pos)
 		vel.y += player.gravity * delta
@@ -39,6 +31,7 @@ func _process(delta):
 		if Input.is_action_pressed("Click"):
 			show()
 			update_trajectory(delta)
+			cam.update_cam(delta)
 	if Input.is_action_just_released("Click"):
 		hide()
 	pass
